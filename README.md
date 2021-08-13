@@ -1,24 +1,4 @@
-本项目是由 [农码一生] Q群【 147271488 】
-
-推出的基于PHP7+Swoole+Redis+Mysql实现的实时聊天系统
-
-PHP框架是：ThinkPHP5.0 (其实啥框架都行，只要你喜欢，可以随意瞎搞)
-
-2.0.0版本已上线 https://icu.ivisionsky.com
-
--------------旧版本分割线-----------------
-
-项目演示地址 : http://chatroom.ivisionsky.com  
-
-GoLang重构的项目演示地址在 : http://go.ivisionsky.com
-
-GoLang重构的H5棋牌地址在 : https://www.ivisionsky.com PC端体验请按F12,点击Toggle Device ToolBar设置为手机模式体验最佳
-
-欢迎各位同仁一起推进、做出一个有意义的项目
-
-CharRoom单词写错了，有洁癖的自行修改
-
-要觉得项目对您有帮助就点个赞吧~~~
+基于PHP7+Swoole+Redis+Mysql 完成的聊天服务器（不包含客户端，所以没有演示地址，纯服务器代码，服务器使用的是swoole的websocket协议，和客户端交互使用的json传输，后期打算用protobuf,不过很麻烦），底子借鉴的是github上面一个叫 CharRoom 的 项目，有兴趣的可以去了解一下，这个项目是一个完整的网页聊天结构 (源码地址：https://github.com/lyxlk/CharRoom.git)，不过好久没有更新了
 
 服务器启动/关闭
 ===============
