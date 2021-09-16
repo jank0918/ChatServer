@@ -91,21 +91,21 @@ class friend {
      */
     public static function getIsFriend($memberId,$friendId)
     {
-        Kit::debug("pokerReceive-AddFriend---------getIsFriend-start",'debug.log');
+        Kit::debug("getIsFriend-start",'debug.log');
 
         $redis = self::getReadRedis();
         if(! $redis->sismember(self::FRIEND_LIST.$memberId,$friendId)){
-            Kit::debug("pokerReceive-AddFriend---------NOT_FRIEND",'debug.log');
+            Kit::debug("getIsFriend---------NOT_FRIEND",'debug.log');
             return self::NOT_FRIEND;
         }
 
 
         if(! $redis->sismember(self::FRIEND_LIST.$friendId,$memberId)){
-            Kit::debug("pokerReceive-AddFriend---------NOT_OTHER_FRIEND",'debug.log');
+            Kit::debug("getIsFriend---------NOT_OTHER_FRIEND",'debug.log');
             return self::NOT_OTHER_FRIEND;
         }
 
-        Kit::debug("pokerReceive-AddFriend---------FRIEND",'debug.log');
+        Kit::debug("getIsFriend---------FRIEND",'debug.log');
         return self::FRIEND;
     }
 }

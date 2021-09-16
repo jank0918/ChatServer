@@ -10,11 +10,33 @@ namespace app\common;
 
 
 use My\RedisPackage;
+use My\RedisNew;
 
 class redis
 {
-    public static function get_redis($workId = 0,$select=0)
+    public static $_instance;
+
+    private function __construct()
     {
-        return new RedisPackage(['select'=>$select],$workId);
+    }
+
+    private function __clone()
+    {
+        // TODO: Implement __clone() method.
+    }
+
+    public static function getInstance($workId = 0, $db = 0)
+    {
+        try{
+            if (isset(self::$_instance[$db]) && self::$_instance[$db]->Ping() == 'Pong') {
+                return self::$_instance[$db];
+            }
+        } catch (Exception $e) {
+
+        }
+
+        self::$_instance[$db] = new RedisPackage(['select'=>$db],$workId);
+
+        return self::$_instance[$db];
     }
 }

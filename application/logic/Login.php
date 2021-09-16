@@ -13,7 +13,9 @@ use app\common\code;
 use app\common\redis_key;
 use app\index\model\Model_Keys;
 use app\logic\model\UserInfo;
+use app\server\command\Swoole;
 use My\Kit;
+use My\RedisPackage;
 use think\Exception;
 
 class Login extends Logic
@@ -23,57 +25,54 @@ class Login extends Logic
     {
         Kit::debug("toLogin-msg----start-----".print_r($frame,1),'debug.log');
 
-        $redis = $this->redis();
         $fd = $frame->fd;
+
         $data = $this->getFrameData($frame->data);
         $data['fd'] = $fd;
 
-        Kit::debug("toLogin-msg----data-----".print_r($data,1),'debug.log');
-
-        $userInfo = new UserInfo($data);
-        Kit::debug("toLogin-msg----UserInfo-----".print_r($userInfo,1),'debug.log');
-
-        $sessionId = $this->getToken($userInfo->memberId,$fd);
+        $sessionId = $this->getToken($this->redis(),$data['member_id'],$fd);
         $data['session_id'] = $sessionId;
 
-        Kit::debug("toLogin-msg----session-----".$sessionId,'debug.log');
-
         $ukey    = Model_Keys::uinfo($sessionId);
-        $user    = UserInfo::getDataFromRedis($redis,$ukey);
-
+        $user    = UserInfo::getDataFromRedis($this->redis(),$ukey);
         if(! empty($user)) {
             Kit::debug("toLogin-msg----repeat login-----",'debug.log');
 
             $this->replaceAccount($server,$user);
 
             /** 生成新的token */
-            $this->getToken($userInfo->memberId,$fd);
+            $sessionId = $this->getToken($this->redis(),$data['member_id'],$fd);
+            $data['session_id'] = $sessionId;
+            $ukey    = Model_Keys::uinfo($sessionId);
         }
+
         Kit::debug("toLogin-msg----saveRedis-----".print_r($data,1),'debug.log');
+        UserInfo::saveRedis($this->redis(),$ukey,$data);
 
-        UserInfo::saveRedis($redis,$ukey,$data);
-
-        Kit::debug("toLogin-msg----user redis2222-----".print_r($user,1),'debug.log');
+        $swoole = new Swoole();
+        $online = $swoole->getOnlineUsers();
 
         $server->push($fd,Kit::json_response(code::LOGIN_SUCCESS,'登录成功',[
             'msg'           =>'登录成功',
-            'fd'            =>$fd,
-            'session_id'    =>$sessionId
+            'fd'            => $fd,
+            'session_id'    => $sessionId,
+            'online'        => $online
         ]));
 
         Kit::debug("toLogin-msg----end-----",'debug.log');
     }
 
     /**
+     * @param $redis
      * @param $memberId
+     * @param $fd
      * @return string
      */
-    private function getToken($memberId,$fd) {
+    private function getToken($redis,$memberId,$fd) {
         Kit::debug("toLogin-msg----getToken-----".$memberId,'debug.log');
 
-        $redis = $this->redis();
         $sessionId = $redis->hget(redis_key::login_hash_key,$memberId);
-        if(empty($sessionId)) {
+        if(empty($sessionId) || strlen($sessionId) < 5) {
             $sessionId = md5(md5(self::SESSION_KEY).md5($memberId));
 
             $redis->hset(redis_key::login_hash_key,$memberId,$sessionId);
@@ -96,7 +95,7 @@ class Login extends Logic
             ]));
 
         }catch (Exception $exception){
-            Kit::debug("---------replaceAccount-------error".print_r($exception,1),'debug.log');
+            Kit::debug("---------replaceAccount-------error".print_r($exception,1),'replace_account.log');
         }
 
         Kit::debug("---------replaceAccount-------out-success",'debug.log');

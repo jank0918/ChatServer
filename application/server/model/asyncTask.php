@@ -37,12 +37,16 @@ class asyncTask extends Model {
     }
 
     /**
+     * 异步进程
+     *
      * @param null $serv
      * @param null $task_id
      * @param null $src_worker_id
      * @param null $msg
-     * @return bool
-     * 异步进程
+     * @param int $status
+     * @return bool|int
+     * @throws \think\db\exception\BindParamException
+     * @throws \think\exception\PDOException
      */
     public static function logToDb($serv=null, $task_id=null, $src_worker_id=null, $msg=null,$status=0) {
         $PlayerLogObj = self::getDbObj();

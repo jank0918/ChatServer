@@ -15,10 +15,11 @@ use app\common\friend;
 
 class ReceiveFriend extends Logic
 {
+    private $to_is_online = true;
     public function main($server, $frame)
     {
-        $redis  = $this->redis();
         $fd     = $frame->fd;
+        $redis  = $this->redis();
 
         $frameData = $this->getFrameData($frame->data);
         Kit::debug("pokerReceive-toAll---------frameData::".print_r($frameData,1),'debug.log');
@@ -30,7 +31,8 @@ class ReceiveFriend extends Logic
         $toSessionId = $this->getSessionByMember($otherId);
         $toFd = $this->getFd($toSessionId);
         if(! $toFd )
-            return $server->push($frame->fd,Kit::json_response(code::USER_NOT_ONLINE,'目标用户不在线'));
+            $this->to_is_online = false;
+
 
         $user = self::getUser($redis,$sessionId);
         if(empty($user))
@@ -57,10 +59,14 @@ class ReceiveFriend extends Logic
             'fd'=>$frame->fd,
         ]));
 
-        $server->push($toFd,Kit::json_response(code::ADD_FRIEND_SUCCESS,'添加好友成功',[
-            'msg'=> "添加好友成功",
-            'time'=>$time,
-            'fd'=>$toFd,
-        ]));
+        if($this->to_is_online){
+            $server->push($toFd,Kit::json_response(code::ADD_FRIEND_SUCCESS,'添加好友成功',[
+                'msg'=> "添加好友成功",
+                'time'=>$time,
+                'fd'=>$toFd,
+            ]));
+        }
+
+        return true;
     }
 }

@@ -10,6 +10,7 @@
 namespace app\server\model;
 
 use app\index\model\Model_Keys;
+use My\Kit;
 use My\RedisPackage;
 use think\Model;
 
@@ -21,9 +22,10 @@ class PlayerLog extends Model{
     /**
      * @param $time
      * @param $msg
-     * @param $status
+     * @param int $status
      * @return int
-     * 插入数据
+     * @throws \think\db\exception\BindParamException
+     * @throws \think\exception\PDOException
      */
     public function insertsAll($time,$msg,$status=0)
     {

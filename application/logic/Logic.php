@@ -23,7 +23,7 @@ abstract class Logic
 
     public function redis($workId = 0,$select=0)
     {
-        return redis::get_redis($workId,$select);
+        return redis::getInstance($workId,$select);
     }
 
     public static function getUser($redis,$sessionId)

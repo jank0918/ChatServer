@@ -210,6 +210,7 @@ class Swoole extends Command {
      * 开启 server
      */
     public function start() {
+        Kit::debug("start....","server.stop");
         $redis  = new RedisPackage([],0);
         $redis->flushdb();
 
@@ -324,7 +325,7 @@ class Swoole extends Command {
      * 客户端链接关闭回掉
      */
     public function pokerClose($server, $fd) {
-        Kit::debug("pokerClose-msg---------".print_r($fd,1),'debug.log');
+        Kit::debug("pokerClose-msg---------fd".print_r($fd,1),'debug.log');
 
         $redis       = new RedisPackage([],$server->worker_id);
 
@@ -356,6 +357,8 @@ class Swoole extends Command {
      * @return bool
      */
     public function pokerTask($server, $task_id, $src_worker_id, $data) {
+        Kit::debug("pokerTask-----",'debug.log');
+
         return asyncTask::LogToDb($server, $task_id, $src_worker_id, $data,1);
     }
 

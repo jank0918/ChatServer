@@ -17,13 +17,13 @@ return [
         // 数据库类型
         'type'            => 'mysql',
         // 服务器地址
-       'hostname'         => '8.142.39.69',
+       'hostname'         => '39.100.246.199',
         // 数据库名
-        'database'        => 'char_room',
+        'database'        => 'chatroom',
         // 用户名
-        'username'        => 'gm97',
+        'username'        => 'mysql',
         // 密码
-        'password'        => 'Mr80yb6r68sHXBIA',
+        'password'        => 'mysql123',
         // 端口
         'hostport'        => '3306',
         // 连接dsn
@@ -59,13 +59,13 @@ return [
         // 数据库类型
         'type'            => 'mysql',
         // 服务器地址
-        'hostname'         => '8.142.39.69',
+        'hostname'         => '39.100.246.199',
         // 数据库名
-        'database'        => 'suc_sheep_share',
+        'database'        => 'oss',
         // 用户名
-        'username'        => 'gm97',
+        'username'        => 'mysql',
         // 密码
-        'password'        => 'Mr80yb6r68sHXBIA',
+        'password'        => 'mysql123',
         // 端口
         'hostport'        => '3306',
         // 连接dsn

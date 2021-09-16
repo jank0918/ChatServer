@@ -20,9 +20,9 @@
     <meta name="x5-page-mode" content="app">
     <base target="_blank">
     <title>PHP研究院</title>
-    <link id="favicon" href="http://39.100.246.199:8018/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-    <link rel="stylesheet" href="http://39.100.246.199:8018/css/v2.css" />
-    <link rel="stylesheet" href="http://39.100.246.199:8018/css/layui.css" />
+    <link id="favicon" href="http://8.142.40.190:8018/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link rel="stylesheet" href="http://8.142.40.190:8018/css/v2.css" />
+    <link rel="stylesheet" href="http://8.142.40.190:8018/css/layui.css" />
     <style>
         body {
             background-image:url(http://www.pptbz.com/d/file/p/201708/d772b112118b5a8f5e94eeae2cda39ba.jpg);
@@ -55,15 +55,15 @@
                     <div class="abs top pnl-warn" id="pnlWarn">
                         <div class="fl btns rel pnl-warn-free">
                             <i class="kh warn-btn menu-btn" title="图片上传" style="right: 10%;top:0">
-                                <img style="width: 18px;cursor: pointer" src="http://39.100.246.199:8018/img/img.png" class="upload" alt="图片上传" />
+                                <img style="width: 18px;cursor: pointer" src="http://8.142.40.190:8018/img/img.png" class="upload" alt="图片上传" />
                             </i>
                             <i class="kh warn-btn menu-btn" title="发送" id="sendMsg2" style="top:2px">
-                                <img style="width: 30px;cursor: pointer" src="http://39.100.246.199:8018/img/button_check.png" alt="发送" />
+                                <img style="width: 30px;cursor: pointer" src="http://8.142.40.190:8018/img/button_check.png" alt="发送" />
                             </i>
                         </div>
                         <div class="fl btns rel pnl-warn-left" id="pnlBtns">
                             <div class="pnl-warn-btns">
-                                <img style="width: 18px;padding: 5px;cursor: pointer" src="http://39.100.246.199:8018/img/img.png" class="upload" alt="图片上传" />
+                                <img style="width: 18px;padding: 5px;cursor: pointer" src="http://8.142.40.190:8018/img/img.png" class="upload" alt="图片上传" />
                             </div>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                     </div>
                     <div class="abs br pnl-btn" id="sendMsg">发送</div>
                     <div class="pnl-support" id="copyright" style="width: 20em;">
-                        <a href="http://39.100.246.199:8018" target="_blank" title="开源项目不易，请保留作者权益信息，谢谢。">
+                        <a href="http://8.142.40.190:8018" target="_blank" title="开源项目不易，请保留作者权益信息，谢谢。">
                             PHP研究院成员组提供技术支持
                         </a>
                     </div>
@@ -82,7 +82,7 @@
                 <div class="slider-container" style="height: 16.25em;">
                     <ul class="slider">
                         <li style="height: 16.25em;margin-left: 25px">
-                            <img style="width: 100%;height: 100%" src="http://39.100.246.199:8018/img/qun.png">
+                            <img style="width: 100%;height: 100%" src="http://8.142.40.190:8018/img/qun.png">
                         </li>
                     </ul>
                 </div>
@@ -129,8 +129,8 @@
         var ws = {};
         var favicon_flag = 0;
         var favicon_flag_intval = 0;
-        var favicon  = 'http://39.100.246.199:8018/img/favicon.ico';
-        var favicon2 = 'http://39.100.246.199:8018/img/favicon2.ico';
+        var favicon  = 'http://8.142.40.190:8018/img/favicon.ico';
+        var favicon2 = 'http://8.142.40.190:8018/img/favicon2.ico';
 
         //验证用户是否在当前面板，没有在当前面板需要修改 favicon 提醒有消息
         var hiddenProperty = 'hidden' in document ? 'hidden' :
@@ -180,15 +180,15 @@
         var scrollToEnd = function (){
             $("#show").scrollTop($("#msgs")[0].scrollHeight);
         };
-        var str = parseInt(Math.random()*(99-1+1)+1,10);
+
         var link =  function  () {
             ws = new WebSocket("ws://39.100.246.199:9801");//连接服务器
             ws.onopen = function(event){
                 var arr = {
                     code:10,
                     msg: '登陆' ,
-                    member_id: 'suc_'+str,
-                    nickname: '无情哈拉哨'+str,
+                    member_id: 'suc_4',
+                    nickname: '无情哈拉哨4',
                     is_vip: 1
                 };
                 ws.send( JSON.stringify(arr));
@@ -235,8 +235,8 @@
                        var arr = {
                            code:10,
                            msg: '登陆' ,
-                           member_id: 'suc_5',
-                           nickname: '无情哈拉哨',
+                           member_id: 'suc_4',
+                           nickname: '无情哈拉哨4',
                            is_vip: 1
                        };
                        ws.send( JSON.stringify(arr));

@@ -10,7 +10,6 @@ namespace app\logic;
 
 
 use app\common\code;
-use app\common\redis_key;
 use app\index\model\Model_Keys;
 use app\logic\model\UserInfo;
 use My\Kit;
@@ -18,33 +17,33 @@ use My\Kit;
 class ChatAll extends Logic
 {
     const HOLD_TIME = 1; //发送消息冷却时间
-
+    public $limit = array();
     public function main($server, $frame)
     {
         Kit::debug("pokerReceive-toAll---------start",'debug.log');
 
-        $redis  = $this->redis();
         $fd     = $frame->fd;
         $key    = Model_Keys::pokerReceive($fd);
 
         $frameData = $this->getFrameData($frame->data);
         Kit::debug("pokerReceive-toAll---------frameData::".print_r($frameData,1),'debug.log');
 
-        $sessionId  = $frameData['session_id'];
-        $data = UserInfo::getDataFromRedis($redis,Model_Keys::uinfo($sessionId));
-        $userInfo = new UserInfo($data);
-        Kit::debug("pokerReceive-toAll---------member_id::".print_r($userInfo->memberId,1),'debug.log');
+        $sessionId  = trim($frameData['session_id']);
+        $redisKey = Model_Keys::uinfo($sessionId);
+        Kit::debug("pokerReceive-toAll---------redisKey::".$redisKey,'debug.log');
+        Kit::debug("pokerReceive-toAll---------redisData::".$server->worker_id.'---'.$this->redis($server->worker_id)->get($redisKey),'debug.log');
 
-        $redis = $this->redis(0,1);
-        if($redis->sismember(redis_key::limit_list,$userInfo->memberId)){
+        $data = UserInfo::getDataFromRedis($this->redis(),$redisKey);
+        Kit::debug("pokerReceive-toAll---------data::".print_r($data,1),'debug.log');
+
+        if(in_array($data['member_id'],$this->limit)){
             return $server->push($fd,Kit::json_response(code::CODE_LIMIT,'您已被禁言！'));
         }
+        $isSet = $this->redis()->setnx($key,1);
+        if( empty($isSet) ) {
+            Kit::debug("pokerReceive-toAll---------start--hold--".$isSet,'debug.log');
 
-        Kit::debug("pokerReceive-toAll---------userinfo::".print_r($data,1),'debug.log');
-
-        $redis  = $this->redis();
-        if(!$redis->SETNX($key,1)) {
-            $next = intval($redis->TTL($key));
+            $next = intval($this->redis()->ttl($key));
             Kit::debug("pokerReceive-toAll---------start--msg-hold",'debug.log');
             $server->push($fd,Kit::json_response(code::MSG_ALL_HOLD,'消息时间冷却',[
                 'msg'  =>'还有'.$next.'s可以发送消息',
@@ -52,19 +51,18 @@ class ChatAll extends Logic
                 'fd'   =>$fd,
             ]));
         }else{
-            $redis->expire($key,self::HOLD_TIME);
+            Kit::debug("pokerReceive-toAll---------start--expire--".$isSet,'debug.log');
+
+            $this->redis()->expire($key,self::HOLD_TIME);
             Kit::debug("pokerReceive-toAll---------session:".$sessionId,'debug.log');
 
             $msg = $frameData['msg'];
             $msg = trim($msg);
-            $msg = htmlspecialchars_decode($msg);
-            $msg = preg_replace("/<(.*?)>/","",$msg);
-            $msg = mb_strlen($msg,'utf-8') > 100 ? mb_substr($msg,0,100) : $msg;
-            if($msg !== "") {
+            if( ! empty($msg) ) {
                 Kit::debug("pokerReceive-toAll---------msg right",'debug.log');
 
                 $info = $server->getClientInfo($fd);
-                Kit::debug("pokerReceive-toAll---------getClientInfo:".print_r($info,1),'debug.log');
+                Kit::debug("ChatClub---------getClientInfo:".print_r($info,1),'debug.log');
 
                 $server->task(json_encode([
                     'msg'=> $msg,
@@ -72,7 +70,7 @@ class ChatAll extends Logic
                     'ip' =>isset($info['remote_ip']) ? $info['remote_ip'] : '',
                 ]));
 
-                $user = self::getUser($redis,$sessionId);
+                $user = self::getUser($this->redis(),$sessionId);
                 Kit::debug("pokerReceive-toAll---------user:".print_r($user,1),'debug.log');
 
                 if(empty($user)) {
@@ -82,26 +80,26 @@ class ChatAll extends Logic
                 } else {
                     $time    = date("H:i:s");
                     foreach($server->connections as $thisFd) {
+                        if(!$server->isEstablished($thisFd)){
+                            Kit::debug("pokerReceive-toAll---------not online--:".$thisFd,'online.log');
+                            continue;
+                        }
+
                         $server->push($thisFd,Kit::json_response(code::MSG_ALL_SUCCESS,'ok',[
                             'msg'=> $msg,
-                            'member_id'=> $userInfo->memberId,
-                            'nickname'=> $userInfo->nickname,
-                            'is_vip'=> $userInfo->isVip,
+                            'member_id'=> $data['member_id'],
+                            'nickname'=> $data['nickname'],
+                            'is_vip'=> $data['is_vip'],
                             'session_id'=>$sessionId,
-                            'time'=>$time,
-                            'fd'=>$fd,
+                            'time'=>$time
                         ]));
                     }
 
                     Kit::debug("pokerReceive-toAll---------msg-success",'debug.log');
                 }
             } else {
-                Kit::debug("pokerReceive-toAll---------msg-null-error",'debug.log');
-
-                $redis->expire($key,5);
                 $server->push($fd,Kit::json_response(code::MSG_ALL_NULL_ERROR,'不能发送空消息！',[
                     'msg'  =>'不能发送空消息！',
-                    'icon' =>"http://pics.sc.chinaz.com/Files/pic/icons128/5938/i6.png",
                     'fd'   =>$fd,
                 ]));
             }

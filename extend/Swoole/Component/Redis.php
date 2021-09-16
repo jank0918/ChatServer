@@ -3,7 +3,7 @@ namespace Swoole\Component;
 use Swoole;
 
 /**
- * Class Redis
+ * Class RedisNew
  * @package Swoole\Component
  */
 class Redis
@@ -97,7 +97,7 @@ class Redis
         }
         catch (\RedisException $e)
         {
-            \Swoole::$php->log->error(__CLASS__ . " Swoole Redis Exception" . var_export($e, 1));
+            \Swoole::$php->log->error(__CLASS__ . " Swoole RedisNew Exception" . var_export($e, 1));
             return false;
         }
     }
@@ -119,8 +119,8 @@ class Redis
                     throw $e;
                 }
 
-                \Swoole::$php->log->error(__CLASS__ . " [" . posix_getpid() . "] Swoole Redis[{$this->config['host']}:{$this->config['port']}]
-                 Exception(Msg=" . $e->getMessage() . ", Code=" . $e->getCode() . "), Redis->{$method}, Params=" . var_export($args, 1));
+                \Swoole::$php->log->error(__CLASS__ . " [" . posix_getpid() . "] Swoole RedisNew[{$this->config['host']}:{$this->config['port']}]
+                 Exception(Msg=" . $e->getMessage() . ", Code=" . $e->getCode() . "), RedisNew->{$method}, Params=" . var_export($args, 1));
                 if ($this->_redis->isConnected())
                 {
                     $this->_redis->close();

@@ -25,16 +25,18 @@ class Index extends Controller {
     public $memberId;
 
     public function index() {
-        Swoole::getSessid();
-        $request = Request::instance();
-        $msg = json_encode([
-            'msg'=>"【用户登陆】|CLASS:".__CLASS__."|Func:".__FUNCTION__,
-            'fd'=>0,
-            'ip'=> $request->ip()
-        ]);
-        asyncTask::LogToDb(null, null, null, $msg);
         $view = new View();
         return $view->fetch('v2');
+    }
+
+    public function v3() {
+        $view = new View();
+        return $view->fetch('v3');
+    }
+
+    public function v4() {
+        $view = new View();
+        return $view->fetch('v4');
     }
 
     /**

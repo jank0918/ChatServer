@@ -87,7 +87,12 @@ class ChatClub extends Logic
                     return $server->push($fd,Kit::json_response(code::LOGIN_RELOAD,'重新登录'));
                 } else {
                     $time    = date("H:i:s");
-                    foreach($this->getClubList($fd) as $thisMemberId) {
+                    $clubList = $this->getClubList($fd);
+                    if(empty($clubList)){
+                        return $server->push($fd,Kit::json_response(code::NO_CLUB,'未加入公会！'));
+                    }
+
+                    foreach($clubList as $thisMemberId) {
                         $thisSessionId = $this->getSessionByMember($thisMemberId);
                         $thisFd = $this->getFd($thisSessionId);
                         if(! $thisFd) continue;
@@ -111,7 +116,6 @@ class ChatClub extends Logic
                 $redis->expire($key,5);
                 $server->push($fd,Kit::json_response(code::MSG_ALL_NULL_ERROR,'不能发送空消息！',[
                     'msg'  =>'不能发送空消息！',
-                    'icon' =>"http://pics.sc.chinaz.com/Files/pic/icons128/5938/i6.png",
                     'fd'   =>$fd,
                 ]));
             }

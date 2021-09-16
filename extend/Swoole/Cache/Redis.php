@@ -4,7 +4,7 @@ use Swoole;
 
 /**
  * 使用Redis作为Cache
- * Class Redis
+ * Class RedisNew
  *
  * @package Swoole\Cache
  */

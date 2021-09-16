@@ -91,4 +91,7 @@ class code
 
     /** @var int 禁言 */
     const CODE_LIMIT = 10016;
+
+    /** @var int 没加入公会 */
+    const NO_CLUB = 10017;
 }

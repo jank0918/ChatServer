@@ -24,9 +24,7 @@ class ChatPerson extends Logic
     {
         Kit::debug("pokerReceive-ChatPerson---------start",'debug.log');
 
-        $redis  = $this->redis();
         $fd     = $frame->fd;
-        $key    = Model_Keys::pokerReceive($fd);
 
         $frameData = $this->getFrameData($frame->data);
         Kit::debug("pokerReceive-ChatPerson---------frameData::".print_r($frameData,1),'debug.log');
@@ -38,8 +36,15 @@ class ChatPerson extends Logic
 
         $userInfo   = $this->getUserInfoBySession($sessionId);
 
-        $toFd = $this->getFd($this->getSessionByMember($otherId));
-        if(! $toFd ){
+        $toSession = $this->getSessionByMember($otherId);
+        Kit::debug("pokerReceive-ChatPerson---------to_session::".$toSession,'debug.log');
+
+        $toFd = $this->getFd($toSession);
+        Kit::debug("pokerReceive-ChatPerson---------to_fd::".$toFd,'debug.log');
+
+        if( empty($toFd) ){
+            Kit::debug("pokerReceive-ChatPerson---------other_id::".$otherId,'debug.log');
+
             return $server->push($frame->fd,Kit::json_response(code::USER_NOT_ONLINE,'目标用户不在线'));
         }
 
@@ -49,15 +54,9 @@ class ChatPerson extends Logic
         $msg = mb_strlen($msg,'utf-8') > 100 ? mb_substr($msg,0,100) : $msg;
 
         if($msg !== "") {
-            $info = $server->getClientInfo($frame->fd);
-            $server->task(json_encode([
-                'msg'=> $msg,
-                'fd'=>$frame->fd,
-                'ip' =>isset($info['remote_ip']) ? $info['remote_ip'] : '',
-            ]));
             Kit::debug("pokerReceive-ChatPerson---------44",'debug.log');
 
-            $user = self::getUser($redis,$sessionId);
+            $user = self::getUser($this->redis(),$sessionId);
             if(empty($user)) {
                 return $server->push($frame->fd,Kit::json_response(code::LOGIN_RELOAD,'重新登录'));
             } else {
@@ -104,10 +103,8 @@ class ChatPerson extends Logic
 
             }
         } else {
-            $redis->expire($key,5);
             $server->push($frame->fd,Kit::json_response(code::PARAM_ERROR,'不能发送空消息！',[
                 'msg'  =>'不能发送空消息！',
-                'icon' =>"http://pics.sc.chinaz.com/Files/pic/icons128/5938/i6.png",
                 'fd'   =>$frame->fd,
             ]));
         }
