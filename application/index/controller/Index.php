@@ -7,15 +7,14 @@
  */
 namespace app\index\controller;
 use app\common\code;
+use app\common\redis;
 use app\index\model\Model_Keys;
 use app\index\model\Model_Upload;
 use app\server\command\Swoole;
 use app\server\model\asyncTask;
 use My\Kit;
 use My\Randomname;
-use My\RedisPackage;
 use think\Controller;
-use think\Cookie;
 use think\Db;
 use think\Request;
 use think\View;
@@ -24,14 +23,50 @@ class Index extends Controller {
 
     public $memberId;
 
+    public $list = array();
+
     public function index() {
         $view = new View();
         return $view->fetch('v2');
     }
 
-    public function v3() {
-        $view = new View();
-        return $view->fetch('v3');
+    public function test() {
+        $arr = array(
+            'zs'=>array(
+                'ls'=>null,
+                'ww'=>array(
+                    'xm'=>null,
+                    'xb'=>null
+                )
+            ),
+            'dd'=>array(
+                'd1'=>[
+                    'd2'=>[
+                        'd3'=>null,
+                        'd4'=>[
+                            'd5'=>null,
+                            'd6'=>null
+                        ]
+                    ],
+                    'd7'=>[
+                        'd8'=>null,
+                        'd9'=>null
+                    ]
+                ]
+            )
+        );
+
+        $this->listManage($arr);
+
+        var_dump($this->list);exit;
+    }
+
+    public function listManage($tmp){
+        foreach ($tmp as $key=>$val){
+            if( is_array($val) ){
+               $this->list[$key] = array_keys($val);
+            }
+        }
     }
 
     public function v4() {
@@ -94,7 +129,7 @@ class Index extends Controller {
     }
 
     public function upload() {
-        $redis  = new RedisPackage([],1);
+        $redis  = redis::getInstance(1,0);
         $sessid = Swoole::getSessid();
 
         $user   = Swoole::getUser($redis,$sessid);
@@ -124,7 +159,7 @@ class Index extends Controller {
     }
 
     public function modify() {
-        $redis  = new RedisPackage([],1);
+        $redis  = redis::getInstance(1,0);
         $sessid = Swoole::getSessid();
         $ukey   = Model_Keys::uinfo($sessid);
         $userStr = $redis->get($ukey);

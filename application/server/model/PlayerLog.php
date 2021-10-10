@@ -9,9 +9,8 @@
  */
 namespace app\server\model;
 
+use app\common\redis;
 use app\index\model\Model_Keys;
-use My\Kit;
-use My\RedisPackage;
 use think\Model;
 
 class PlayerLog extends Model{
@@ -51,7 +50,7 @@ class PlayerLog extends Model{
     public function getOneLog() {
         try {
             $key   = Model_Keys::getOneLog();
-            $redis = new RedisPackage([],9999);
+            $redis = redis::getInstance(9999,0);
             $ajson = $redis->LPOP($key);
             $aData = json_decode($ajson,true);
             if(empty($aData)) {

@@ -9,8 +9,8 @@
 namespace app\logic\model;
 
 
+use app\common\redis;
 use app\common\redis_key;
-use My\RedisPackage;
 
 class MsgQueue extends Common
 {
@@ -19,7 +19,7 @@ class MsgQueue extends Common
 
     public function __construct()
     {
-        $this->redis = new RedisPackage([],0);
+        $this->redis = redis::getInstance(0,0);
     }
 
     public function add_queue($frame)

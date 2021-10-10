@@ -154,23 +154,11 @@
         助飞PHP、让PHPer不再建站搬砖
     </span>
 </div>
-<a href="https://github.com/lyxlk/CharRoom" target="_blank">
-    <img style="position: absolute; top: 40px; left: 0; border: 0;width: 150px;height: 150px;" src="http://chatroom.ivisionsky.com/img/forkme.png" alt="Fork me on GitHub">
-</a>
 
 <div id="container">
-    <div class="header">
-        <span style="float: left;">
-            Q群【 <b style="color: #ff0000">200979897</b> 】
-        </span>
-        <span style="float: right;" class="time"></span>
-    </div>
     <ul class="content">
     </ul>
     <div class="footer">
-        <div id="user_face_icon">
-            <img src="http://codeigniter.org.cn/forums/uc_server/images/noavatar_middle.gif" alt="">
-        </div>
         <input id="TalkMSG" placeholder="说点什么吧...">
         <span id="sendMsg">发送</span>
     </div>
@@ -217,7 +205,7 @@
         };
 
         var link =  function  () {
-            ws = new WebSocket("ws://39.100.246.199:9801");//连接服务器
+            ws = new WebSocket("ws://192.168.0.100:9801");//连接服务器
             ws.onopen = function(event){
                 alert('骚年你来啦~~~加群一起浪吧');
             };

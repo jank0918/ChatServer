@@ -15,7 +15,6 @@ use app\index\model\Model_Keys;
 use app\logic\model\UserInfo;
 use app\server\command\Swoole;
 use My\Kit;
-use My\RedisPackage;
 use think\Exception;
 
 class Login extends Logic

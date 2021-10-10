@@ -9,8 +9,6 @@
  */
 namespace app\server\model;
 
-use app\index\model\Model_Keys;
-use My\RedisPackage;
 use think\Model;
 
 class Friend extends Model{

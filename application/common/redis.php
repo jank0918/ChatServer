@@ -10,7 +10,6 @@ namespace app\common;
 
 
 use My\RedisPackage;
-use My\RedisNew;
 
 class redis
 {

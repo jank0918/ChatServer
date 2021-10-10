@@ -41,23 +41,21 @@ namespace app\server\command;
 
 use app\common\char_room;
 use app\common\code;
+use app\common\redis;
 use app\common\redis_key;
 use app\index\model\Model_Keys;
 use app\logic\LogicIndex;
-use app\logic\Login;
 use app\server\model\asyncTask;
-use My\RedisPackage;
 use think\console\Command;
 use think\console\input\Option;
 use My\Kit;
 use think\console\Input;
 use think\console\output;
-use app\logic\model\MsgQueue;
 
 class Swoole extends Command {
 
-    protected $process_name   = "Swoole_of_chatRoom"; //当前进程名称
-    protected $master_pid_file = '/data/CharRoom/runtime/swoole_master_pid.txt'; //保存当前进程pid
+    protected $process_name   = "Swoole_of_chatServer"; //当前进程名称
+    protected $master_pid_file = '/data/ChatServer/runtime/swoole_master_pid.txt'; //保存当前进程pid
     public static $md5Key = "";//自定义一个签名，暂时没用
 
     protected $redis;
@@ -211,7 +209,7 @@ class Swoole extends Command {
      */
     public function start() {
         Kit::debug("start....","server.stop");
-        $redis  = new RedisPackage([],0);
+        $redis  = redis::getInstance(0,0);
         $redis->flushdb();
 
         \swoole_set_process_name($this->process_name);
@@ -226,7 +224,7 @@ class Swoole extends Command {
             'max_request' => 1000,//此参数表示worker进程在处理完n次请求后结束运行，使用Base模式时max_request是无效的
             'backlog' => 1280,   //此参数将决定最多同时有多少个待accept的连接，swoole本身accept效率是很高的，基本上不会出现大量排队情况。
             'log_level' => 5,//'https://wiki.swoole.com/wiki/page/538.html
-            'log_file' => '/data/CharRoom/runtime/log_file.'.date("Ym").'.txt',// 'https://wiki.swoole.com/wiki/page/280.html 仅仅是做运行时错误记录，没有长久存储的必要。
+            'log_file' => '/data/ChatServer/runtime/log_file.'.date("Ym").'.txt',// 'https://wiki.swoole.com/wiki/page/280.html 仅仅是做运行时错误记录，没有长久存储的必要。
             'heartbeat_check_interval' => 30, //每隔多少秒检测一次，单位秒，Swoole会轮询所有TCP连接，将超过心跳时间的连接关闭掉
             'heartbeat_idle_time' => 3600, //TCP连接的最大闲置时间，单位s , 如果某fd最后一次发包距离现在的时间超过heartbeat_idle_time会把这个连接关闭。
             'task_worker_num' => 10,
@@ -261,7 +259,7 @@ class Swoole extends Command {
      * 获取在线人数
      */
     public function getOnlineUsers() {
-        $redis = new RedisPackage([],0);
+        $redis = redis::getInstance(0,0);
         $sessidAndFd = Model_Keys::sessidAndFd();
         $count       = $redis->HLEN($sessidAndFd);
 
@@ -327,7 +325,7 @@ class Swoole extends Command {
     public function pokerClose($server, $fd) {
         Kit::debug("pokerClose-msg---------fd".print_r($fd,1),'debug.log');
 
-        $redis       = new RedisPackage([],$server->worker_id);
+        $redis       = redis::getInstance(0,0);
 
         $sessidAndFd = Model_Keys::sessidAndFd();
         Kit::debug("pokerClose-msg---------sessidAndFd::".$sessidAndFd,'debug.log');
@@ -367,10 +365,10 @@ class Swoole extends Command {
     }
 
     /**
-* @param $server
-* @param $worker_id
-* tick定时器
-*/
+     * @param $server
+     * @param $worker_id
+     * tick定时器
+     */
     public function pokerWorkerStart($server, $worker_id) {
 
         /* //定时检测 非正常客户端连接

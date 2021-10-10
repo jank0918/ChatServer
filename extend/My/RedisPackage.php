@@ -13,7 +13,7 @@ class RedisPackage
     public $work_id; //静态类需要和不同线程的id 绑定
 
     public $options = [
-        'host' => '127.0.0.1',
+        'host' => '192.168.0.100',
         'port' => 6379,
         'password' => '123456',
         'select' => 0,

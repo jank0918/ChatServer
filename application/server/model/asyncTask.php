@@ -6,9 +6,6 @@
  * Time: 15:11
  */
 namespace app\server\model;
-use app\index\model\Model_Keys;
-use My\Kit;
-use My\RedisPackage;
 use think\Db;
 use think\Model;
 

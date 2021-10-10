@@ -10,7 +10,6 @@ namespace app\common;
 
 
 use My\Kit;
-use My\RedisPackage;
 
 class friend {
     /**
@@ -25,18 +24,18 @@ class friend {
 
     /**
      * @param int $workId
-     * @return RedisPackage
+     * @return mixed
      */
     public static function getWriteRedis($workId = 0){
-        return new RedisPackage(['select' => 2],$workId);
+        return redis::getInstance($workId,2);
     }
 
     /**
      * @param int $workId
-     * @return RedisPackage
+     * @return mixed
      */
     public static function getReadRedis($workId = 0){
-        return new RedisPackage(['select' => 2],$workId);
+        return redis::getInstance($workId,2);
     }
 
     /**
