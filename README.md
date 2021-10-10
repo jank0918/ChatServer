@@ -1,4 +1,4 @@
-基于PHP7+Swoole+Redis+Mysql 完成的聊天服务器（不包含客户端，所以没有演示地址，纯服务器代码，服务器使用的是swoole的websocket协议，和客户端交互使用的json传输，后期打算用protobuf,不过很麻烦），底子借鉴的是github上面一个叫 ChatServer 的 项目，有兴趣的可以去了解一下，这个项目是一个完整的网页聊天结构 (源码地址：https://github.com/lyxlk/ChatServer.git)，不过好久没有更新了
+基于PHP7+Swoole+Redis+Mysql 完成的聊天服务器（不包含客户端，所以没有演示地址，纯服务器代码，服务器使用的是swoole的websocket协议，和客户端交互使用的json传输，后期打算用protobuf,不过很麻烦），底子借鉴的是github上面一个叫 ChatServer 的 项目，有兴趣的可以去了解一下，这个项目是一个完整的网页聊天结构 (源码地址：https://github.com/lyxlk/CharRoom)，不过好久没有更新了
 
 服务器启动/关闭
 ===============
